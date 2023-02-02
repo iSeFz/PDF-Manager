@@ -1,7 +1,7 @@
 # Description : Program to manage pdf files (merge, split and extract)
 # Author : Seif Yahia
-# Last Modified Date : 2 Feb. 2023
-# Version : 1.3
+# Last Modified Date : 3 Feb. 2023
+# Version : 1.4
 
 import PyPDF2
 import os
@@ -104,18 +104,26 @@ def separate():
             break
         else:
             print("\t\tFile does NOT exist!")
-            continue
     print("\tSeparated pages will be named as \"templateName-pageNumber.pdf\"")
     filename = input("Enter the template NAME: ").replace(".pdf", "")
     reader_pdf = PyPDF2.PdfFileReader(filepath)
-    # Get number of pages of the input file
-    page_num = reader_pdf.getNumPages()
-    # Create a new folder/directory to write files
+    # Check if the new path already exists
     newPath = os.path.join(filepath.replace(".pdf", ""), "")
+    if(os.path.exists(newPath) == True):
+        print(f"\tDirectory {newPath} already exists!")
+        # Take another new directory from the user
+        while(True):
+            newPath = input("Enter a NEW path for the output directory: ").replace("\"", "")
+            # Check if the entered path is a valid NEW directory
+            if(os.path.exists(newPath) == False):
+                break
+            else:
+                print(f"\tDirectory {newPath} already exists!")
+    # Create a folder with the new directory to write files
     os.mkdir(newPath)
     os.chdir(newPath)
     # Loop over all pages in the selected file
-    for page in range(page_num):
+    for page in range(reader_pdf.getNumPages()):
         writer_pdf = PyPDF2.PdfFileWriter()
         writer_pdf.addPage(reader_pdf.getPage(page))
         # Write every page in a separate pdf
