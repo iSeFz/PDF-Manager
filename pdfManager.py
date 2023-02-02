@@ -1,6 +1,7 @@
 # Description : Program to manage pdf files (merge, split and extract)
 # Author : Seif Yahia
 # Last Modified Date : 2 Feb. 2023
+# Version : 1.3
 
 import PyPDF2
 import os
@@ -13,6 +14,10 @@ def merge():
     while(True):
         # Take input files from user
         pdf_file = input(f"Enter the path of pdf #{nFiles} (Press ENTER To Stop!): ").replace("\"", "")
+        # Check if the file exist or not
+        if(((os.path.exists(pdf_file) == False) or (os.path.isdir(pdf_file) == True)) and (pdf_file != "")):
+            print("\t\tFile does NOT exist!")
+            continue
         if(pdf_file == ""):
             # If the user pressed ENTER in the first time
             # Display the menu again then exit the program
@@ -24,10 +29,17 @@ def merge():
         mergedObject.append(PyPDF2.PdfFileReader(pdf_file, 'rb'))
         nFiles += 1
     outfile = input("Enter a NAME to the output merged PDF: ").replace(".pdf", "")
-    o_path = input("Enter a PATH to the output merged PDF: ").replace("\"", "")
+    # Check if the path entered is a valid directory or not
+    while(True):
+        outpath = input("Enter a PATH to the output merged PDF: ").replace("\"", "")
+        if(os.path.isdir(outpath) == True):
+            break
+        else:
+            print("\t\tPath does NOT exist!")
+            continue
     # Change the directory of the running code
     # To the specified directory by the user
-    os.chdir(o_path)
+    os.chdir(outpath)
     mergedObject.write(outfile + ".pdf")
     mergedObject.close()
     print("\nFiles are merged successfully!!")
@@ -38,7 +50,14 @@ def merge():
 def extract():
     global head
     # Take inputs needed from the user
-    filepath = input("Enter the PATH of the input PDF: ").replace("\"", "")
+    while(True):
+        filepath = input("Enter the PATH of the input PDF: ").replace("\"", "")
+        # Check if the entered path is a valid file but NOT a directory
+        if((os.path.exists(filepath) == True) and (os.path.isdir(filepath)) == False):
+            break
+        else:
+            print("\t\tFile does NOT exist!")
+            continue
     print("\tExtracted page will be named as \"fileName-pageNumber.pdf\"")
     filename = input("Enter the file NAME: ").replace(".pdf", "")
     # Get the number of pages in the entered file
@@ -77,8 +96,15 @@ def extract():
 # Split the selected pdf in to separate files
 # Each with one page from the original pdf
 def separate():
-    # Take input names from the user
-    filepath = input("Enter the PATH of the input PDF: ").replace("\"", "")
+    # Take inputs needed from the user
+    while(True):
+        filepath = input("Enter the PATH of the input PDF: ").replace("\"", "")
+        # Check if the entered path is a valid file but NOT a directory
+        if((os.path.exists(filepath) == True) and (os.path.isdir(filepath)) == False):
+            break
+        else:
+            print("\t\tFile does NOT exist!")
+            continue
     print("\tSeparated pages will be named as \"templateName-pageNumber.pdf\"")
     filename = input("Enter the template NAME: ").replace(".pdf", "")
     reader_pdf = PyPDF2.PdfFileReader(filepath)
