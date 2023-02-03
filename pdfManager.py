@@ -1,7 +1,7 @@
 # Description : Program to manage pdf files (merge, split and extract)
 # Author : Seif Yahia
 # Last Modified Date : 3 Feb. 2023
-# Version : 1.4
+# Version : 1.5
 
 import PyPDF2
 import os
@@ -9,7 +9,7 @@ import os
 
 # Merge multiple pdf files into one file
 def merge():
-    mergedObject = PyPDF2.PdfFileMerger()
+    mergedObject = PyPDF2.PdfMerger()
     nFiles = 1
     while(True):
         # Take input files from user
@@ -25,8 +25,8 @@ def merge():
                 run()
                 exit()
             break
-        # Merge pdf files via the PdfFileMerger object
-        mergedObject.append(PyPDF2.PdfFileReader(pdf_file, 'rb'))
+        # Merge pdf files via the PdfMerger object
+        mergedObject.append(PyPDF2.PdfReader(pdf_file))
         nFiles += 1
     outfile = input("Enter a NAME to the output merged PDF: ").replace(".pdf", "")
     # Check if the path entered is a valid directory or not
@@ -61,8 +61,8 @@ def extract():
     print("\tExtracted page will be named as \"fileName-pageNumber.pdf\"")
     filename = input("Enter the file NAME: ").replace(".pdf", "")
     # Get the number of pages in the entered file
-    reader_pdf = PyPDF2.PdfFileReader(filepath)
-    n_pages = reader_pdf.getNumPages()
+    reader_pdf = PyPDF2.PdfReader(filepath)
+    n_pages = len(reader_pdf.pages)
     # Check if the input of page number is correct or not
     while(True):
         numpage = input("Enter the page number to extract: ")
@@ -80,8 +80,8 @@ def extract():
         else:
             print("\tINVALID INPUT!! Enter ONLY numbers.")
     # Create the pdf and add the page to the writer object
-    writer_pdf = PyPDF2.PdfFileWriter()
-    writer_pdf.addPage(reader_pdf.getPage(numpage - 1))
+    writer_pdf = PyPDF2.PdfWriter()
+    writer_pdf.add_page(reader_pdf.pages[numpage - 1])
     # Change the directory to the same file directory
     # By removing the filename itself
     head, tail = os.path.split(filepath)
@@ -106,7 +106,7 @@ def separate():
             print("\t\tFile does NOT exist!")
     print("\tSeparated pages will be named as \"templateName-pageNumber.pdf\"")
     filename = input("Enter the template NAME: ").replace(".pdf", "")
-    reader_pdf = PyPDF2.PdfFileReader(filepath)
+    reader_pdf = PyPDF2.PdfReader(filepath)
     # Check if the new path already exists
     newPath = os.path.join(filepath.replace(".pdf", ""), "")
     if(os.path.exists(newPath) == True):
@@ -123,9 +123,9 @@ def separate():
     os.mkdir(newPath)
     os.chdir(newPath)
     # Loop over all pages in the selected file
-    for page in range(reader_pdf.getNumPages()):
-        writer_pdf = PyPDF2.PdfFileWriter()
-        writer_pdf.addPage(reader_pdf.getPage(page))
+    for page in range(len(reader_pdf.pages)):
+        writer_pdf = PyPDF2.PdfWriter()
+        writer_pdf.add_page(reader_pdf.pages[page])
         # Write every page in a separate pdf
         # named 'filename-current_page_number.pdf'
         with open(f'{filename}-{page + 1}.pdf', 'wb') as f:
