@@ -1,10 +1,11 @@
 # Description : Program to manage pdf files (merge, split and extract)
 # Author : Seif Yahia
 # Last Modified Date : 3 Feb. 2023
-# Version : 1.5
+# Version : 1.6
 
 import PyPDF2
 import os
+import time
 
 
 # Merge multiple pdf files into one file
@@ -22,6 +23,7 @@ def merge():
             # If the user pressed ENTER in the first time
             # Display the menu again then exit the program
             if(nFiles == 1):
+                clear()
                 run()
                 exit()
             break
@@ -44,6 +46,7 @@ def merge():
     mergedObject.close()
     print("\nFiles are merged successfully!!")
     print(f"Go check {outfile}.pdf at {os.getcwd()}")
+    clear()
 
 
 # Extract a certain page from pdf and put it in a new pdf
@@ -91,6 +94,7 @@ def extract():
         writer_pdf.write(f)
     print("\nPage extracted from PDF successfully!!")
     print(f"Go check {filename}-{numpage}.pdf at {os.getcwd()}")
+    clear()
 
 
 # Split the selected pdf in to separate files
@@ -132,11 +136,21 @@ def separate():
             writer_pdf.write(f)
     print("\nPDF separated into pages successfully!!")
     print(f"Go check the files at {newPath}")
+    clear()
+
+
+# Clear the screen after every operation
+def clear():
+    # Wait for any message to be read
+    time.sleep(3)
+    # Check for operating system if windows use cls
+    # If the os is linux or mac use clear
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 # Main function to run the program
 def run():
-    while True:
+    while(True):
         print('''\nThe program has the following features:
 (1) Merge multiple pdf files
 (2) Extract a single page from pdf
@@ -151,9 +165,11 @@ def run():
             separate()
         elif(choice == '4'):
             print("\tThank you for using the PDF manager!")
+            time.sleep(2)
             break
         else:
             print("\n\t\tINVALID INPUT!!")
+            clear()
 
 
 # Greeting message then the program starts
